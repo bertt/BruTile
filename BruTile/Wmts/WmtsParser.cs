@@ -76,7 +76,7 @@ namespace BruTile.Wmts
             foreach (var layer in capabilties.Contents.Layers)
             {
                 var identifier = layer.Identifier.Value;
-                var title = layer.Title[0].Value;
+                var title = layer.Title?[0].Value;
                 string @abstract = layer.Abstract != null ? layer.Abstract[0].Value : string.Empty;
 
                 foreach (var tileMatrixLink in layer.TileMatrixSetLink)
@@ -327,19 +327,19 @@ namespace BruTile.Wmts
                 tileMatrix.Top);
         }
 
-        private static KeyValuePair<string, Resolution> ToResolution(Generated.TileMatrix tileMatrix, 
+        private static KeyValuePair<string, Resolution> ToResolution(TileMatrix tileMatrix, 
             int[] ordinateOrder, double metersPerUnit = 1, ScaleSet ss = null)
         {
-            
             // Get the coordinates
             var coords = tileMatrix.TopLeftCorner.Trim().Split(' ');
             
             // Try to get units per pixel from passed scale set
             var unitsPerPixel = tileMatrix.ScaleDenominator*ScaleHint/metersPerUnit;
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
             if (unitsPerPixel == 0 || double.IsNaN(unitsPerPixel))
             {
-                if (ss == null)
-                    throw new ArgumentNullException();
+                if (ss == null) throw new ArgumentNullException();
+
                 unitsPerPixel = ss[tileMatrix.ScaleDenominator].GetValueOrDefault(0d);
             }
 
@@ -354,8 +354,8 @@ namespace BruTile.Wmts
                     CultureInfo.InvariantCulture), 
                     Convert.ToDouble(coords[ordinateOrder[1]], 
                     CultureInfo.InvariantCulture),
-                    tileMatrix.MatrixWidth,
-                    tileMatrix.MatrixHeight,
+                    (int)tileMatrix.MatrixWidth,
+                    (int)tileMatrix.MatrixHeight,
                     tileMatrix.ScaleDenominator));
           }
     }

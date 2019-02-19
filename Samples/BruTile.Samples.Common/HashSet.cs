@@ -4,6 +4,7 @@ using System.Collections;
 
 namespace BruTile.Samples.Common
 {
+    // todo: Use frameworks HashSet which I think is now available
     public class HashSet<T> : ICollection<T>
     {
         private readonly Dictionary<T, short> _dictionary;
@@ -16,6 +17,8 @@ namespace BruTile.Samples.Common
         // Methods
         public void Add(T item)
         {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
             // We don't care for the value in dictionary, Keys matter.
             _dictionary.Add(item, 0);
         }
@@ -27,6 +30,7 @@ namespace BruTile.Samples.Common
 
         public bool Contains(T item)
         {
+            if (item == null) throw new ArgumentNullException(nameof(item));
             return _dictionary.ContainsKey(item);
         }
 
@@ -37,6 +41,7 @@ namespace BruTile.Samples.Common
 
         public bool Remove(T item)
         {
+            if (item == null) throw new ArgumentNullException(nameof(item));
             return _dictionary.Remove(item);
         }
 

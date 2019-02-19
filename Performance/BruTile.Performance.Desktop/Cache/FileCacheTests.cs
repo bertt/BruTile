@@ -1,19 +1,23 @@
 ﻿using System;
 using System.IO;
 using BruTile.Cache;
+using BruTile.Performance.Desktop.Utilities;
 using NUnit.Framework;
 
-namespace BruTile.PerformanceTests.Cache
+namespace BruTile.Performance.Desktop.Cache
 {
     [TestFixture, Category("CacheTest")]
     class FileCacheTests
     {
         private FileCache _cache;
+        private string _directory;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
-            _cache = ClearedFileCacheTest();
+            _directory = Path.Combine(Paths.AssemblyDirectory, "FileCacheTest");
+
+            _cache = ClearedFileCacheTest(_directory);
         }
 
         [Test]
@@ -26,7 +30,7 @@ namespace BruTile.PerformanceTests.Cache
                 i => new
                 {
                     TileIndex = new TileIndex(i % 10, i / 10, "1"),
-                    Image = new byte[] { (byte)i }
+                    Image = new [] { (byte)i }
                 },
                 args => _cache.Add(args.TileIndex, args.Image));
             loadWork.WaitForTestsToComplete();
@@ -42,11 +46,23 @@ namespace BruTile.PerformanceTests.Cache
             Console.WriteLine("Min FileCache.Find time is {0}ms", findWork.MinTime);
         }
 
-        private static FileCache ClearedFileCacheTest()
+        private static FileCache ClearedFileCacheTest(string directory)
         {
-            if (Directory.Exists("FileCacheTest"))
-                Directory.Delete("FileCacheTest", true);
-            return new FileCache("FileCacheTest", "buf");
+            if (Directory.Exists(directory))
+            {
+                DeleteDirectory(directory);
+            }
+            return new FileCache(directory, "buf");
+        }
+
+        public static void DeleteDirectory(string directory)
+        {
+            var files = Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                File.Delete(file);
+            }
+            Directory.Delete(directory, true);
         }
     }
 }

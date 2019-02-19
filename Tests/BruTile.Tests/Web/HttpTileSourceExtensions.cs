@@ -12,14 +12,14 @@ namespace BruTile.Tests.Web
         {
             var tasks = tileInfos.Select(t => tileSource.GetTileAsync(httpClient, t)).ToArray();
             var result = Task.WhenAll(tasks);
-            return await result;
+            return await result.ConfigureAwait(false);
         }
 
         public static async Task<byte[]> GetTileAsync(this HttpTileSource tileSource, HttpClient httpClient, TileInfo tileInfo)
         {
             var bytes = tileSource.PersistentCache.Find(tileInfo.Index);
             if (bytes != null) return bytes;
-            bytes = await httpClient.GetByteArrayAsync(tileSource.GetUri(tileInfo));
+            bytes = await httpClient.GetByteArrayAsync(tileSource.GetUri(tileInfo)).ConfigureAwait(false);
             if (bytes != null) tileSource.PersistentCache.Add(tileInfo.Index, bytes);
             return bytes;
         }

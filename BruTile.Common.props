@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  
+  <!--- Package information, Version -->
+  <PropertyGroup>
+    <Version>2.0.2</Version>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Copyright>Copyright © BruTile Developers Team 2008-2018</Copyright>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/BruTile/BruTile/master/license.txt</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/BruTile/BruTile</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/BruTile/BruTile</RepositoryUrl>
+    <PackageIconUrl>https://avatars2.githubusercontent.com/u/9279219?s=200&amp;v=4</PackageIconUrl>
+    <Authors>Paul den Dulk, Felix Obermaier</Authors>
+    <Company>BruTile Developers Team</Company>
+  </PropertyGroup>
+
+  <!--- Compiler settings -->
+  <PropertyGroup>
+    <OutputPath>$(SolutionDir)$(Configuration)\$(ProjectName)</OutputPath>
+    <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>1701;1702;1705;1591</NoWarn>
+  </PropertyGroup>
+
+</Project>

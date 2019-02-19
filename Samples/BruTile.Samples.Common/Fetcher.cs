@@ -1,4 +1,4 @@
-﻿﻿// Copyright 2008 - Paul den Dulk (Geodan)
+﻿// Copyright (c) BruTile developers team. All rights reserved. See License.txt in the project root for license information.
 
 using System.Linq;
 using BruTile.Cache;
@@ -84,7 +84,13 @@ namespace BruTile.Samples.Common
 
                 if (tilesMissing.Count == 0) { _waitHandle.Reset(); }
 
-                if (_tilesInProgress.Count >= MaxThreads) { _waitHandle.Reset(); }
+                lock (_tilesInProgress)
+                {
+                    if (_tilesInProgress.Count >= MaxThreads)
+                    {
+                        _waitHandle.Reset();
+                    }
+                }
             }
         }
 
@@ -100,7 +106,10 @@ namespace BruTile.Samples.Common
         {
             foreach (TileInfo info in tilesMissing)
             {
-                if (_tilesInProgress.Count >= MaxThreads) return;
+                lock (_tilesInProgress)
+                {
+                    if (_tilesInProgress.Count >= MaxThreads) return;
+                }
                 FetchTile(info);
             }
         }

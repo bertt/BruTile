@@ -45,7 +45,6 @@ namespace BruTile.Demo
             ClipToBounds = true;
             _fetcher = new Fetcher<Image>(_tileSource, _tileCache);
             _fetcher.DataChanged += FetcherOnDataChanged;
-            _invalid = true;
         }
 
         public void SetTileSource(ITileSource source)
@@ -102,7 +101,7 @@ namespace BruTile.Demo
         private void FetcherOnDataChanged(object sender, DataChangedEventArgs<Image> e)
         {
             if (!Dispatcher.CheckAccess())
-                Dispatcher.Invoke(new Action(() => FetcherOnDataChanged(sender, e)));
+                Dispatcher.Invoke(() => FetcherOnDataChanged(sender, e));
             else
             {
                 if (e.Error == null && e.Tile != null)

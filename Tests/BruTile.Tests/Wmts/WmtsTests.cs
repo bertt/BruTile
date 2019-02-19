@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using BruTile.Tests.Utilities;
 using BruTile.Wmts;
 using BruTile.Wmts.Generated;
 using NUnit.Framework;
@@ -18,7 +19,7 @@ namespace BruTile.Tests.Wmts
         public void TestParsingWmtsCapabilities(string xml)
         {
             // arrange
-            using (var stream = File.OpenRead(Path.Combine("Resources", "Wmts", xml)))
+            using (var stream = File.OpenRead(Path.Combine(Paths.AssemblyDirectory, "Resources", "Wmts", xml)))
             {
                 // act
                 IEnumerable<ITileSource> tileSources = null;
@@ -34,7 +35,7 @@ namespace BruTile.Tests.Wmts
         public void TestParsingWmtsCapabilitiesResourceUrls()
         {
             // arrange
-            using (var stream = File.OpenRead(Path.Combine("Resources", "Wmts", "wmts-capabilties-restful-wien-resourceUrls.xml")))
+            using (var stream = File.OpenRead(Path.Combine(Paths.AssemblyDirectory, "Resources", "Wmts", "wmts-capabilties-restful-wien-resourceUrls.xml")))
             {
                 // act
                 var tileSources = WmtsParser.Parse(stream);
@@ -48,7 +49,7 @@ namespace BruTile.Tests.Wmts
         public void TestParsingWmtsCapabilities()
         {
             // arrange
-            using (var stream = File.OpenRead(Path.Combine("Resources", "Wmts", "wmts-capabilties-restful-wien.xml")))
+            using (var stream = File.OpenRead(Path.Combine(Paths.AssemblyDirectory, "Resources", "Wmts", "wmts-capabilties-restful-wien.xml")))
             {
                 // act
                 var tileSources = WmtsParser.Parse(stream);
@@ -62,7 +63,7 @@ namespace BruTile.Tests.Wmts
         public void TestParsingWmtsCapabilitiesKvp()
         {
             // arrange
-            using (var stream = File.OpenRead(Path.Combine("Resources", "Wmts", "wmts-capabilities-pdok.xml")))
+            using (var stream = File.OpenRead(Path.Combine(Paths.AssemblyDirectory, "Resources", "Wmts", "wmts-capabilities-pdok.xml")))
             {
                 // act
                 var tileSources = WmtsParser.Parse(stream);
@@ -76,7 +77,7 @@ namespace BruTile.Tests.Wmts
         public void TestParsingWmtsGlobalCRS84Scale()
         {
             // arrange
-            using (var stream = File.OpenRead(Path.Combine("Resources", "Wmts", "wmts-capabilities-pdok.xml")))
+            using (var stream = File.OpenRead(Path.Combine(Paths.AssemblyDirectory, "Resources", "Wmts", "wmts-capabilities-pdok.xml")))
             {
                 // act
                 var tileSources = WmtsParser.Parse(stream);
@@ -91,7 +92,7 @@ namespace BruTile.Tests.Wmts
         public void TestParsingWmtsCapabilitiesKvpAndRestful()
         {
             // arrange
-            using (var stream = File.OpenRead(Path.Combine("Resources", "Wmts", "wmts-capabilities-arcgis-server-doggersbank.xml")))
+            using (var stream = File.OpenRead(Path.Combine(Paths.AssemblyDirectory, "Resources", "Wmts", "wmts-capabilities-arcgis-server-doggersbank.xml")))
             {
                 // act
                 var tileSources = WmtsParser.Parse(stream);
@@ -172,7 +173,7 @@ namespace BruTile.Tests.Wmts
         public void TestParsingWmtsWhereUpperBoundAndLowerBoundLackOwsPrefix()
         {
             // arrange
-            using (var stream = File.OpenRead(Path.Combine("Resources", "Wmts", "wmts_capabilities_where_upperbound_and_lowerbound_lack_ows_prefix.xml")))
+            using (var stream = File.OpenRead(Path.Combine(Paths.AssemblyDirectory, "Resources", "Wmts", "wmts_capabilities_where_upperbound_and_lowerbound_lack_ows_prefix.xml")))
             {
                 // act
                 var tileSources = WmtsParser.Parse(stream);
@@ -181,6 +182,63 @@ namespace BruTile.Tests.Wmts
                 var tileSource = tileSources.First(s => s.Name.ToLower() == "topowebb");
                 var tileSchema = (WmtsTileSchema)tileSource.Schema;
                 Assert.NotNull(tileSchema.Extent);
+            }
+        }
+
+        [Test]
+        public void TestParsingWmtsCapabilitiesWithDeviatingEpsgCodes()
+        {
+            // arrange
+            using (var stream = File.OpenRead(Path.Combine(Paths.AssemblyDirectory, "Resources", "Wmts", "wmts-capabilities-cuzk-cz.xml")))
+            {
+                // act
+                var tileSources = WmtsParser.Parse(stream);
+
+                // assert
+                Assert.NotNull(tileSources);
+            }
+        }
+
+
+        [Test]
+        public void TestParsingWmtsCapabilitiesRayaBasemapServer()
+        {
+            // arrange
+            using (var stream = File.OpenRead(Path.Combine(Paths.AssemblyDirectory, "Resources", "Wmts", "wmts-capabilities-raya-basemap-server.xml")))
+            {
+                // act
+                var tileSources = WmtsParser.Parse(stream);
+
+                // assert
+                Assert.AreEqual(3, tileSources.Count());
+            }
+        }
+
+        [Test]
+        public void TestParsingWmtsCapabilitiesMarsWithDoubleValues()
+        {
+            // arrange
+            using (var stream = File.OpenRead(Path.Combine(Paths.AssemblyDirectory, "Resources", "Wmts", "wmts-capabilities-mars.xml")))
+            {
+                // act
+                var tileSources = WmtsParser.Parse(stream);
+
+                // assert
+                Assert.AreEqual(1, tileSources.Count());
+            }
+        }
+
+        [Test]
+        public void TestNoTitlePresentInWmtsCapabilitiesLayer()
+        {
+            // arrange
+            using (var stream = File.OpenRead(Path.Combine(Paths.AssemblyDirectory, "Resources", "Wmts", "wmts-capabilities-opencache-statkart-no.xml")))
+            {
+                // act
+                var tileSources = WmtsParser.Parse(stream);
+
+                // assert
+                Assert.AreEqual(319, tileSources.Count());
             }
         }
     }

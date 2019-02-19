@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using BruTile.Tests.Utilities;
 using BruTile.Wmsc;
 using NUnit.Framework;
 
@@ -16,7 +17,7 @@ namespace BruTile.Tests.Wmsc
         {
             // arrange
             const int expectedNumberOfTileSources = 54;
-            using (var stream = File.OpenRead(Path.Combine("Resources", "Wmsc", "WmsCCapabilities_1_1_1.xml")))
+            using (var stream = File.OpenRead(Path.Combine(Paths.AssemblyDirectory, "Resources", "Wmsc", "WmsCCapabilities_1_1_1.xml")))
             {
                 // act
                 var tileSources = WmscTileSource.CreateFromWmscCapabilties(XDocument.Load(stream));
@@ -37,8 +38,7 @@ namespace BruTile.Tests.Wmsc
         [TestCase("http://resource.sgu.se/service/wms/130/brunnar?SERVICE=WMS&VERSION=1.3&REQUEST=getcapabilities&TILED=true", true)]
         public void TestParseUrl(string url, bool ignore)
         {
-            if (ignore)
-                throw new IgnoreException("Url is not for WMS-C");
+            if (ignore) Assert.Pass();
 
             // arrange
             var myWmsc = new Uri(url);

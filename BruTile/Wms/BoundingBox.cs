@@ -9,17 +9,15 @@ namespace BruTile.Wms
 {
     public class BoundingBox : XmlObject
     {
-        //<BoundingBox CRS="CRS:84" minx="-71.63" miny="41.75" maxx="-70.78" maxy="42.90" resx="0.01" resy="0.01"/>
-
-        public BoundingBox()
-        { }
-
-        public BoundingBox(XElement node, string nameSpace)
+        // ReSharper disable once UnusedParameter.Local
+        public BoundingBox(XElement node, string ns)
         {
-            var att = node.Attribute(XName.Get("CRS"));
-            if (att == null) att = node.Attribute(XName.Get("crs"));
-            if (att == null) att = node.Attribute(XName.Get("SRS"));
-            if (att == null) att = node.Attribute(XName.Get("srs"));
+            var att =
+                node.Attribute(XName.Get("CRS")) ?? 
+                node.Attribute(XName.Get("crs")) ?? 
+                node.Attribute(XName.Get("SRS")) ??
+                node.Attribute(XName.Get("srs"));
+
             if (att != null)
                 CRS = att.Value;
             else
@@ -46,7 +44,7 @@ namespace BruTile.Wms
 
         public override XElement ToXElement(string nameSpace)
         {
-            var attributes = new List<XAttribute>
+            var attributes = new List<object>
                                  {
                                      new XAttribute("CRS", CRS),
                                      new XAttribute("minx", MinX.ToString(NumberFormatInfo.InvariantInfo)),

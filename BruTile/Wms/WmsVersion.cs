@@ -1,7 +1,6 @@
 // Copyright (c) BruTile developers team. All rights reserved. See License.txt in the project root for license information.
 
 using System;
-using System.Globalization;
 using System.Xml;
 
 namespace BruTile.Wms
@@ -161,17 +160,17 @@ using (var writer = XmlWriter.Create("file.xml"))
 
 */
 
-        internal void WriteStartRootElement(XmlWriter writer, int? updateSequence)
+        internal void WriteStartRootElement(XmlWriter writer, string updateSequence)
         {
             writer.WriteAttributeString("version", VersionString);
-            if (updateSequence.HasValue)
-                writer.WriteAttributeString("updateSequence", updateSequence.Value.ToString(NumberFormatInfo.InvariantInfo));
+            if (updateSequence != null)
+                writer.WriteAttributeString("updateSequence", updateSequence);
 
             if (Version >= WmsVersionEnum.Version_1_3_0)
             {
-                writer.WriteAttributeString("xmlns", "xlink", null, WmsNamespaces.Xlink);
-                writer.WriteAttributeString("xmlns", "xsi", null, WmsNamespaces.Xsi);
-                writer.WriteAttributeString("xsi", "schemaLocation", null, string.Format("{0}", WmsNamespaces.Wms));
+                writer.WriteAttributeString("xmlns", "xlink", string.Empty, WmsNamespaces.Xlink);
+                writer.WriteAttributeString("xmlns", "xsi", string.Empty, WmsNamespaces.Xsi);
+                writer.WriteAttributeString("xsi", "schemaLocation", string.Empty, $"{WmsNamespaces.Wms}");
                 writer.WriteStartElement("WMS_Capabilities", WmsNamespaces.Wms, WmsNamespaces.WmsSchemaUrl(Version, "capabilities"));
             }
             else

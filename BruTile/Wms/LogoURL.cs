@@ -18,13 +18,15 @@ namespace BruTile.Wms
 
         public LogoURL(XElement node, string nameSpace)
         {
-            var att = node.Attribute(XName.Get("width"));
-            Width = int.Parse(att.Value, NumberFormatInfo.InvariantInfo);
-            att = node.Attribute(XName.Get("height"));
-            Height = int.Parse(att.Value, NumberFormatInfo.InvariantInfo);
+            var widthAttribute = node.Attribute(XName.Get("width"));
+            if (widthAttribute == null) throw new System.Exception("Width node is null in xml");
+            Width = int.Parse(widthAttribute.Value, NumberFormatInfo.InvariantInfo);
+            var heightAttribute = node.Attribute(XName.Get("height"));
+            if (heightAttribute == null) throw new System.Exception("Height node is null in xml");
+            Height = int.Parse(heightAttribute.Value, NumberFormatInfo.InvariantInfo);
 
             var element = node.Element(XName.Get("Format", nameSpace));
-            Format = element == null ? "png" : element.Value;
+            Format = element?.Value ?? "png";
 
             element = node.Element(XName.Get("OnlineResource", nameSpace));
             if (element != null)

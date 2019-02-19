@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 using BruTile.Cache;
 using NUnit.Framework;
 
@@ -57,9 +58,8 @@ namespace BruTile.Tests.Cache
             var sw = new Stopwatch();
 
             var tk = new TileIndex(1, 2, "2");
-            byte[] bm = Cache.Find(tk);
             sw.Start();
-            bm = Cache.Find(tk);
+            var bm = Cache.Find(tk);
             sw.Stop();
             Assert.IsNotNull(bm);
             Assert.AreEqual(TileSizeX * TileSizeY * BitsPerPixel, bm.Length);
@@ -67,7 +67,7 @@ namespace BruTile.Tests.Cache
             Assert.AreEqual(2, Convert.ToInt32(bm[1]));
             Assert.AreEqual(2, Convert.ToInt32(bm[2]));
 
-            Console.WriteLine(string.Format("Specific Tile ({0},{1},{2}) found in {3}ms.", tk.Level, tk.Row, tk.Col, sw.ElapsedMilliseconds));
+            Console.WriteLine($"Specific Tile ({tk.Level},{tk.Row},{tk.Col}) found in {sw.ElapsedMilliseconds}ms.");
 
             sw.Reset();
             tk = new TileIndex(5, 5, (MaxLevel - 1).ToString(CultureInfo.InvariantCulture));
@@ -80,7 +80,7 @@ namespace BruTile.Tests.Cache
             Assert.AreEqual(5, Convert.ToInt32(bm[1]));
             Assert.AreEqual(MaxLevel - 1, Convert.ToInt32(bm[2]));
 
-            Console.WriteLine(string.Format("Specific Tile ({0},{1},{2}) found in {3}ms.", tk.Level, tk.Row, tk.Col, sw.ElapsedMilliseconds));
+            Console.WriteLine($"Specific Tile ({tk.Level},{tk.Row},{tk.Col}) found in {sw.ElapsedMilliseconds}ms.");
         }
 
         private const int NumberToSearch = 20;
@@ -88,22 +88,23 @@ namespace BruTile.Tests.Cache
 
         public void FindTiles()
         {
-            var sw = new Stopwatch();
             var waitHandle = new AutoResetEvent(false);
-            sw.Start();
+            var sw = new Stopwatch();
             var count = 0;
             foreach (var ti in GetRandomTileIndices(NumberToSearch))
             {
-                ThreadPool.QueueUserWorkItem(FindTileOnTread, new object[] { ti, waitHandle, ++count });
+                var task = new Task(FindTileOnTread, new object[] {ti, waitHandle, ++count});
+                task.Start();
             }
+
             waitHandle.WaitOne();
             sw.Stop();
             Console.WriteLine("{0} Tiles found in {1}ms (Penalty: {2}ms).", NumberToSearch, sw.ElapsedMilliseconds, WaitMilliseconds);
         }
 
-        private static readonly Random _random = new Random(93765783);
+        private readonly Random _random = new Random(93765783);
 
-        private static IEnumerable<TileIndex> GetRandomTileIndices(int numberOfTileInfos)
+        private IEnumerable<TileIndex> GetRandomTileIndices(int numberOfTileInfos)
         {
             for (var i = 0; i < numberOfTileInfos; i++)
             {

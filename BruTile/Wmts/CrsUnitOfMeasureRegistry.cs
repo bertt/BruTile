@@ -29,7 +29,7 @@ namespace BruTile.Wmts
         public string Name { get; }
 
         /// <summary>
-        /// Gets a scale value to transform this Unit of measure to <see cref="Meter"/>
+        /// Gets a scale value to transform this Unit of measure to <see cref="ToMeter"/>
         /// </summary>
         public double ToMeter => _toMeter;
 
@@ -40,14 +40,14 @@ namespace BruTile.Wmts
         /// <returns><c>true</c> if <see cref="ToMeter"/>s are equal</returns>
         public bool Equals(UnitOfMeasure other)
         {
-            return _toMeter == other.ToMeter;
+            return Math.Abs(_toMeter - other.ToMeter) < double.Epsilon;
         }
 
     }
 
     public class CrsUnitOfMeasureRegistry
     {
-        private static readonly Dictionary<int, UnitOfMeasure> Registry = new Dictionary<int, UnitOfMeasure>();
+        private static readonly Dictionary<int, UnitOfMeasure> Registry;
 
         private const double EarthRadius = 6378137;
         private const double EarthCircumference = 2*EarthRadius*Math.PI;
